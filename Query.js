@@ -1,3 +1,4 @@
+'use-strict'
 const { Relationship, Node } = require("neo4j-driver/lib/v1/graph-types.js");
 
 class Query {
@@ -8,6 +9,8 @@ class Query {
     this.creates = [];
     this.merges = [];
     this.returns = [];
+    this.limitnum;
+    this.offsetnum;
   }
   // MATCH node or relationship
   match(node) {
@@ -30,6 +33,18 @@ class Query {
   }
   return(node) {
     this.returns.push(node);
+    return this;
+  }
+
+  limit(lim) {
+    if(typeof lim == 'number')
+      this.limitnum = lim
+    return this;
+  }
+
+  offset(off) {
+    if(typeof off == 'number')
+      this.offsetnum= off
     return this;
   }
 
@@ -84,28 +99,18 @@ class Query {
           .join(",")
       );
     }
+
+    if(this.offsetnum != undefined){
+      stmt = stmt.concat(" SKIP ").concat(this.offsetnum.toString());
+    }
+    
+    if(this.limitnum != undefined){
+      stmt = stmt.concat(" LIMIT ").concat(this.limitnum.toString());
+    }
+
+
     return stmt;
   }
 }
 
-const a = new Node("a", ["File"], { name: "gon" });
-const b = new Node("b", [], { name: "Bob Esponja" });
-console.log(b.toString());
-
-const c = new Node("", ["File"], { name: "gon" });
-console.log(c.toString());
-
-const d = new Node("", ["File"], {});
-console.log(d.toString());
-
-const f = new Relationship("i", "a", "b", "FRIEND", {});
-
-const q = new Query();
-
-let res = q
-  .match(a)
-  .match(b)
-  .merge(f)
-  .return("b")
-  .build();
-console.log(res);
+module.exports = Query;
