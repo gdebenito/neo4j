@@ -1,6 +1,4 @@
 'use-strict'
-const { Relationship, Node } = require("neo4j-driver/lib/v1/graph-types.js");
-
 class Query {
   constructor() {
     //statements

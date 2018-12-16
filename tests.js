@@ -1,3 +1,5 @@
+'use-strict';
+const { Relationship, Node } = require("neo4j-driver/lib/v1/graph-types.js");
 const Query = require('./Query');
 
 const a = new Node("a", ["File"], { name: "gon" });
